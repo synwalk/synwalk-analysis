@@ -81,5 +81,3 @@ def generate_benchmark_graphs(storage_dir, num_graphs, params):
         f.write(f'# The benchmark graphs in this directory are generated '
                 f'with the following {num_graphs} random seeds:\n')
         f.write('\n'.join(map(str, seeds)))
-
-    print(f'Benchmark generation successful.')
