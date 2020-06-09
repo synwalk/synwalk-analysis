@@ -67,7 +67,7 @@ def generate_benchmark_graphs(storage_dir, num_graphs, params):
         graph = nx.convert_node_labels_to_integers(graph, first_label=1)
 
         # store graph
-        nx.write_pajek(graph, storage_dir + '/graph_' + str(seed) + '.txt')
+        nx.write_edgelist(graph, storage_dir + '/graph_' + str(seed) + '.txt', data=False)
 
         # extract and store ground truth communities
         communities = {frozenset(graph.nodes[v]['community']) for v in graph}
