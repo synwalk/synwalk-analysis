@@ -59,7 +59,7 @@ def generate_benchmark_graphs(storage_dir, num_graphs, params):
         try:
             graph = LFR_benchmark_graph(**params, seed=seed)
         except nx.ExceededMaxIterations as err:
-            print(f'Failed to generate network: ', err)
+            # print(f'Failed to generate network: ', err)
             i -= 1
             continue
 
