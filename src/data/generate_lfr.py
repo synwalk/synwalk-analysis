@@ -74,7 +74,7 @@ def generate_benchmark_graphs(storage_dir, num_graphs, params):
         clu = Clustering()
         clu.from_cluster_list(communities)
         clu.relabel_clusters_by_size()
-        clu.save(storage_dir + '/clustering' + str(seed) + '.json')
+        clu.save(storage_dir + '/clustering_' + str(seed) + '.json')
 
     # store random seeds
     with open(storage_dir + '/seeds.txt', mode='w') as f:
