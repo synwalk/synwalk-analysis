@@ -17,7 +17,7 @@ class Infomap:
         Path to the Infomap binary (should include synwalk extension).
     """
 
-    def __init__(self, workspace_path='../workspace', infomap_path='../infomap/Infomap'):
+    def __init__(self, workspace_path='../workspace/', infomap_path='../infomap/Infomap'):
         """Read infomap/synwalk results from .tree file and return a clusim clustering.
 
             Parameters
@@ -49,43 +49,45 @@ class Infomap:
             os.mkdir(self.workspace_path)
 
         # construct argument string
-        args = ' -2 -u --input-format link-list --out-name infomap_out'  # two-level, undirected network
+        args = ' --two-level --undirected --zero-based-numbering' \
+               ' --input-format link-list --out-name infomap_out'
         args += additional_args
 
         # run infomap
         os.system(self.infomap_path + ' ' + input_file + ' ' + self.workspace_path + ' ' + args)
 
         # read clustering from output file
-        clu = Infomap.read_communities_from_tree_file(self.workspace_path + '/infomap_out.tree')
+        clu = Infomap.read_communities_from_tree_file(self.workspace_path + 'infomap_out.tree')
         return clu
 
     def synwalk(self, input_file, additional_args=''):
         """Wrapper around synwalk cmd line tool. Runs synwalk on the given input file.
 
-                Parameters
-                ----------
-                input_file : str
-                    Path to the input file in edge list format.
-                additional_args : str
-                    Additional arguments for the synwalk cmd line tool.
+            Parameters
+            ----------
+            input_file : str
+                Path to the input file in edge list format.
+            additional_args : str
+                Additional arguments for the synwalk cmd line tool.
 
-                Returns
-                ------
-                Clustering
-                    A clusim Clustering object holding the results from synwalk.
-            """
+            Returns
+            ------
+            Clustering
+                A clusim Clustering object holding the results from synwalk.
+        """
         if not os.path.exists(self.workspace_path):
             os.mkdir(self.workspace_path)
 
         # construct argument string
-        args = ' -2 -u --altmap --input-format link-list --out-name synwalk_out'  # two-level, undirected network
+        args = ' --two-level --undirected --zero-based-numbering --altmap' \
+               ' --input-format link-list --out-name synwalk_out'
         args += additional_args
 
         # run synwalk
         os.system(self.infomap_path + ' ' + input_file + ' ' + self.workspace_path + ' ' + args)
 
         # read clustering from output file
-        clu = Infomap.read_communities_from_tree_file(self.workspace_path + '/synwalk_out.tree')
+        clu = Infomap.read_communities_from_tree_file(self.workspace_path + 'synwalk_out.tree')
         return clu
 
     @classmethod

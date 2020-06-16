@@ -36,48 +36,49 @@ def generate_lfr_params(num_nodes, mixing_param):
 def generate_benchmark_graphs(storage_dir, num_graphs, params):
     """Generates and stores LFR benchmark graphs and clustering information.
 
-        Parameters
-        ----------
-        storage_dir : str
-            Directory where the generated graphs are stored.
-        num_graphs : int
-            Number of graphs to generate.
-        params : dict
-            LFR benchmark params as returned by 'generate_lfr_params()'
-        """
+    Parameters
+    ----------
+    storage_dir : str
+        Directory where the generated graphs are stored. Path should end with '/'.
+    num_graphs : int
+        Number of graphs to generate.
+    params : dict
+        LFR benchmark params as returned by 'generate_lfr_params()'
+    """
     # generate random seeds for benchmark generation reproducibility
     int32 = np.iinfo(np.int32)
-    seeds = np.random.randint(int32.max)
 
     # generate 'num_graphs' benchmark graphs
-    seeds = []
-    for i in range(num_graphs):
+    seeds = set()
+    graph_cnt = 0
+    while graph_cnt < num_graphs:
         seed = np.random.randint(int32.max)
-        seeds.append(seed)
+        if seed in seeds:
+            continue
 
         # generate benchmark graph
         try:
             graph = LFR_benchmark_graph(**params, seed=seed)
         except nx.ExceededMaxIterations as err:
             # print(f'Failed to generate network: ', err)
-            i -= 1
             continue
 
-        # convert labels to start from 1 (omit '0' as a node label)
-        graph = nx.convert_node_labels_to_integers(graph, first_label=1)
+        # update seeds + increase graph count
+        seeds.add(seed)
+        graph_cnt += 1
 
         # store graph
-        nx.write_edgelist(graph, storage_dir + '/graph_' + str(seed) + '.txt', data=False)
+        nx.write_edgelist(graph, storage_dir + 'graph_' + str(seed) + '.txt', data=False)
 
         # extract and store ground truth communities
         communities = {frozenset(graph.nodes[v]['community']) for v in graph}
         clu = Clustering()
         clu.from_cluster_list(communities)
         clu.relabel_clusters_by_size()
-        clu.save(storage_dir + '/clustering_' + str(seed) + '.json')
+        clu.save(storage_dir + 'clustering_' + str(seed) + '.json')
 
     # store random seeds
-    with open(storage_dir + '/seeds.txt', mode='w') as f:
+    with open(storage_dir + 'seeds.txt', mode='w') as f:
         f.write(f'# The benchmark graphs in this directory are generated '
                 f'with the following {num_graphs} random seeds:\n')
         f.write('\n'.join(map(str, seeds)))
