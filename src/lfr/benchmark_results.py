@@ -83,7 +83,8 @@ class BenchmarkResults:
             list
                 List of variables corresponding to the stored data points.
         """
-        return [dp.var for dp in self.datapoints]
+        var_list = sorted([dp.var for dp in self.datapoints])
+        return np.asarray(var_list)
 
     def get_mean_scores(self):
         """Returns a list of mean scores corresponding to the stored data points.
@@ -94,7 +95,10 @@ class BenchmarkResults:
                 List of mean scores corresponding to the stored data points. Each
                 entry is a mean value across all values stored within a data point.
         """
-        return np.array([np.mean(dp.scores) for dp in self.datapoints])
+        var_list = [dp.var for dp in self.datapoints]
+        mean_scores = [np.mean(dp.scores) for dp in self.datapoints]
+        _, sorted_scores = zip(*sorted(zip(var_list, mean_scores)))
+        return np.asarray(sorted_scores)
 
     def get_score_std(self):
         """Returns a list of score standard deviations corresponding to the stored data points.
@@ -105,7 +109,10 @@ class BenchmarkResults:
                 List of score standard deviations corresponding to the stored data points. Each
                 entry is represents the standard deviation of the scores stored within a data point.
         """
-        return np.array([np.std(dp.scores, ddof=1) for dp in self.datapoints])
+        var_list = [dp.var for dp in self.datapoints]
+        mean_stds = [np.std(dp.scores, ddof=1) for dp in self.datapoints]
+        _, sorted_stds = zip(*sorted(zip(var_list, mean_stds)))
+        return np.asarray(sorted_stds)
 
     def save(self, path):
         """Stores a data point as pickle dump.
