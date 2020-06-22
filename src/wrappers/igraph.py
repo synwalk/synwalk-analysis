@@ -41,7 +41,8 @@ def walktrap(filepath):
     """
     graph = read_graph(filepath)
     member_list = graph.community_walktrap().as_clustering().membership
-    return Clustering().from_membership_list(member_list)
+    clu = Clustering().from_membership_list(member_list)
+    return clu.relabel_clusters_by_size()
 
 
 def spinglass(filepath):
@@ -59,7 +60,8 @@ def spinglass(filepath):
     """
     graph = read_graph(filepath)
     member_list = graph.community_spinglass().membership
-    return Clustering().from_membership_list(member_list)
+    clu = Clustering().from_membership_list(member_list)
+    return clu.relabel_clusters_by_size()
 
 
 def label_propagation(filepath):
@@ -77,7 +79,8 @@ def label_propagation(filepath):
     """
     graph = read_graph(filepath)
     member_list = graph.community_label_propagation().membership
-    return Clustering().from_membership_list(member_list)
+    clu = Clustering().from_membership_list(member_list)
+    return clu.relabel_clusters_by_size()
 
 
 def multilevel(filepath):
@@ -95,7 +98,8 @@ def multilevel(filepath):
     """
     graph = read_graph(filepath)
     member_list = graph.community_multilevel().membership
-    return Clustering().from_membership_list(member_list)
+    clu = Clustering().from_membership_list(member_list)
+    return clu.relabel_clusters_by_size()
 
 
 def edge_betweenness(filepath):
@@ -113,4 +117,5 @@ def edge_betweenness(filepath):
     """
     graph = read_graph(filepath)
     member_list = graph.community_edge_betweenness().as_clustering().membership
-    return Clustering().from_membership_list(member_list)
+    clu = Clustering().from_membership_list(member_list)
+    return clu.relabel_clusters_by_size()

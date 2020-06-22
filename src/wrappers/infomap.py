@@ -112,10 +112,12 @@ class Infomap:
 
         # extract community membership list
         node_ids = df['name'].tolist()
-        labels = df['community'].apply(lambda x: int(x)).tolist()
+        min_label = int(df['community'].min())
+        labels = df['community'].apply(lambda x: int(x) - min_label).tolist()
         membership_list = [cluster_id for _, cluster_id in sorted(zip(node_ids, labels))]
 
         # generate clustering from membership list
         clu = Clustering()
         clu.from_membership_list(membership_list)
+        clu.relabel_clusters_by_size()
         return clu
