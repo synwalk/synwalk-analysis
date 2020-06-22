@@ -7,8 +7,6 @@ from clusim.clustering import Clustering
 class Infomap:
     """Wrapper class around the infomap/synwalk cmd-line tool.
 
-    ...
-
     Attributes
     ----------
     workspace_path : str
@@ -45,8 +43,7 @@ class Infomap:
             Clustering
                 A clusim Clustering object holding the results from infomap.
         """
-        if not os.path.exists(self.workspace_path):
-            os.mkdir(self.workspace_path)
+        os.makedirs(self.workspace_path, exist_ok=True)
 
         # construct argument string
         args = ' --two-level --undirected --zero-based-numbering' \
@@ -75,8 +72,7 @@ class Infomap:
             Clustering
                 A clusim Clustering object holding the results from synwalk.
         """
-        if not os.path.exists(self.workspace_path):
-            os.mkdir(self.workspace_path)
+        os.makedirs(self.workspace_path, exist_ok=True)
 
         # construct argument string
         args = ' --two-level --undirected --zero-based-numbering --altmap' \
