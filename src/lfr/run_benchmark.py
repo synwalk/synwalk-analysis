@@ -4,13 +4,17 @@ from src.data.lfr_io import get_benchmark_files
 from src.lfr.benchmark_results import *
 from src.wrappers.igraph import *
 from src.wrappers.infomap import Infomap
-from src.wrappers.metrics import ami_score
+from src.wrappers.metrics import ami_score, synwalk_error
 
 # method dict
 methods = {'infomap': Infomap().infomap,
            'synwalk': Infomap().synwalk,
            'walktrap': walktrap,
            'label_propagation': label_propagation}
+
+# metrics dict
+metrics = {'ami': ami_score,
+           'synwalk_error': synwalk_error}
 
 
 def run_benchmark(benchmark_dir, results_dir, clustering_method, max_samples=100, overwrite_results=False):
@@ -70,7 +74,7 @@ def run_benchmark(benchmark_dir, results_dir, clustering_method, max_samples=100
     print('')
 
 
-def evaluate_clustering_results(benchmark_dir, results_dir, metric=ami_score) -> BenchmarkResults:
+def evaluate_clustering_results(benchmark_dir, results_dir, metric='ami') -> BenchmarkResults:
     """Run a given clustering method on LFR benchmark graphs.
 
     We assume benchmark graphs with a fixed network size and variable mixing parameter mu.
@@ -91,9 +95,12 @@ def evaluate_clustering_results(benchmark_dir, results_dir, metric=ami_score) ->
     BenchmarkResults
         A BenchmarkResults object containing the achieved scores (according to metric) for every graph processed.
     """
+    if metric not in metrics:
+        print('Invalid metric - cancelling evaluation.')
+        return BenchmarkResults()
+
+    metric = metrics[metric]
     results = BenchmarkResults()
-    clu_pred = Clustering()
-    clu_true = Clustering()
 
     # iterate over subfolders in the benchmark directory
     folders = [entry for entry in os.scandir(results_dir) if entry.is_dir()]
@@ -103,14 +110,12 @@ def evaluate_clustering_results(benchmark_dir, results_dir, metric=ami_score) ->
 
         # get clustering file paths
         _, clu_files_pred = get_benchmark_files(folder_pred)
-        _, clu_files_true = get_benchmark_files(folder_true)
+        graph_files, clu_files_true = get_benchmark_files(folder_true)
         # iterate over files and evaluate
         dp = DataPoint(mu, len(clu_files_pred))
         for seed, clu_file_pred in clu_files_pred.items():
             assert (seed in clu_files_true)  # there should be a ground truth
-            clu_pred.load(clu_file_pred)
-            clu_true.load(clu_files_true[seed])
-            score = metric(clu_pred, clu_true)
+            score = metric(clu_file_pred, clu_files_true[seed], graph_files[seed])
             dp.add_sample(seed, score)
 
         print(f'\rCompleted {(folder_idx + 1)}/{len(folders)} data points.', end='')
