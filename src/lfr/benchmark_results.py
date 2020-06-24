@@ -1,6 +1,7 @@
 import pickle
 
 import numpy as np
+from typing import List
 
 
 class DataPoint:
@@ -63,7 +64,7 @@ class BenchmarkResults:
     """
 
     def __init__(self):
-        self.datapoints = []
+        self.datapoints: List[DataPoint] = []
 
     def add_datapoint(self, dp: DataPoint):
         """Adds a data point to the list of data points.
