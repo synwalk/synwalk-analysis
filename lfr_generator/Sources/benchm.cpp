@@ -1536,7 +1536,7 @@ int erase_links(deque<set<int> > & E, const deque<deque<int> > & member_list, co
 	
 }
 
-int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, const deque<deque<int> > & member_matrix, deque<int> & num_seq) {
+int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, const deque<deque<int> > & member_matrix, deque<int> & num_seq, Parameters p) {
 
 	
 	int edges=0;
@@ -1597,7 +1597,7 @@ int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, 
 	
 
 
-	ofstream out1("network.dat");
+	ofstream out1(p.path_to_network_file);
 	for (int u=0; u<E.size(); u++) {
 
 		set<int>::iterator itb=E[u].begin();
@@ -1611,7 +1611,7 @@ int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, 
 		
 
 	
-	ofstream out2("community.dat");
+	ofstream out2(p.path_to_community_file);
 
 	for (int i=0; i<member_list.size(); i++) {
 		
@@ -1631,7 +1631,7 @@ int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, 
 
 	
 	
-	ofstream statout("statistics.dat");
+	ofstream statout(p.path_to_statistics_file);
 	
 	deque<int> degree_seq;
 	for (int i=0; i<E.size(); i++)
@@ -1668,7 +1668,7 @@ int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, 
 
 
 int benchmark(bool excess, bool defect, int num_nodes, double  average_k, int  max_degree, double  tau, double  tau2, 
-	double  mixing_parameter, int  overlapping_nodes, int  overlap_membership, int  nmin, int  nmax, bool  fixed_range, double ca) {	
+	double  mixing_parameter, int  overlapping_nodes, int  overlap_membership, int  nmin, int  nmax, bool  fixed_range, double ca, Parameters p) {
 
 	
 	
@@ -1775,7 +1775,7 @@ int benchmark(bool excess, bool defect, int num_nodes, double  average_k, int  m
 	
 	
 	cout<<"recording network..."<<endl;	
-	print_network(E, member_list, member_matrix, num_seq);
+	print_network(E, member_list, member_matrix, num_seq, p);
 
 	
 	
@@ -1806,11 +1806,9 @@ void erase_file_if_exists(string s) {
 
 }
 
-
 int main(int argc, char * argv[]) {
 	
-		
-	srand_file();
+
 	Parameters p;
 	if(set_parameters(argc, argv, p)==false) {
 		
@@ -1820,16 +1818,23 @@ int main(int argc, char * argv[]) {
 		return -1;
 	
 	}
+
+	// initialize rng with given seed or use time_seed.dat
+	int seed = p.seed;
+	if (seed == -1)
+        seed = srand_file(p.out_dir);
+	else
+        srand5(seed);
+
+	p.path_to_network_file = p.out_dir + std::string("network_") + std::to_string(seed) + std::string(".dat");
+    p.path_to_community_file = p.out_dir + std::string("community_") + std::to_string(seed) + std::string(".dat");
+    p.path_to_statistics_file = p.out_dir + std::string("statistics_") + std::to_string(seed) + std::string(".dat");
+
+	erase_file_if_exists(p.path_to_network_file);
+    erase_file_if_exists(p.path_to_community_file);
+	erase_file_if_exists(p.path_to_statistics_file);
 	
-	
-	
-	
-	
-	erase_file_if_exists("network.dat");
-	erase_file_if_exists("community.dat");
-	erase_file_if_exists("statistics.dat");
-	
-	benchmark(p.excess, p.defect, p.num_nodes, p.average_k, p.max_degree, p.tau, p.tau2, p.mixing_parameter, p.overlapping_nodes, p.overlap_membership, p.nmin, p.nmax, p.fixed_range, p.clustering_coeff);	
+	benchmark(p.excess, p.defect, p.num_nodes, p.average_k, p.max_degree, p.tau, p.tau2, p.mixing_parameter, p.overlapping_nodes, p.overlap_membership, p.nmin, p.nmax, p.fixed_range, p.clustering_coeff, p);
 		
 	return 0;
 	

@@ -1,6 +1,7 @@
 
 
 
+#include <string>
 
 
 
@@ -28,6 +29,12 @@ class Parameters {
 		bool defect;
 		bool randomf;
 		double clustering_coeff;
+
+		int seed;
+		string out_dir;
+		string path_to_network_file;
+        string path_to_community_file;
+        string path_to_statistics_file;
 		
 		
 		bool set(string &, string &);
@@ -65,6 +72,9 @@ Parameters::Parameters() {
 		defect=false;
 		
 		clustering_coeff=unlikely;
+
+        seed = -1;
+        out_dir = "./";
 		
 		command_flags.push_back("-N");		//0
 		command_flags.push_back("-k");		//1
@@ -77,6 +87,8 @@ Parameters::Parameters() {
 		command_flags.push_back("-on");		//8
 		command_flags.push_back("-om");		//9
 		command_flags.push_back("-C");		//10
+        command_flags.push_back("-s");		//11
+        command_flags.push_back("-o");		//12
 
 			
 		
@@ -209,6 +221,9 @@ bool Parameters::arrange() {
 		
 	
 	}
+
+    cout<<"random seed:\t"<<seed<<endl;
+    cout<<"output directory:\t"<<out_dir<<endl;
 	
 	
 		
@@ -234,6 +249,10 @@ bool Parameters::set(string & flag, string & num) {
 	
 	
 	cout<<"setting... "<<flag<<" "<<num<<endl;
+    if (flag==command_flags[12]){
+        out_dir = num;
+        return true;
+    }
 	double err;
 	if(!cast_string_to_double(num, err)) {
 				
@@ -335,6 +354,18 @@ bool Parameters::set(string & flag, string & num) {
 		clustering_coeff=err;		
 
 	}
+    else if(flag==command_flags[11]) {
+
+        if (fabs(err-int (err))>1e-8) {
+
+            cerr<<"\n***********************\nERROR: the seed must be an integer"<<endl;
+            return false;
+
+        }
+
+        seed=cast_int(err);
+
+    }
 	else {
 				
 		cerr<<"\n***********************\nERROR while reading parameters: "<<flag<<" is an unknown option"<<endl;
@@ -371,6 +402,8 @@ void statement() {
 	cout<<"-on\t\t[number of overlapping nodes]"<<endl;
 	cout<<"-om\t\t[number of memberships of the overlapping nodes]"<<endl;
 	cout<<"-C\t\t[Average clustering coefficient]"<<endl;
+    cout<<"-s\t\t[random seed]"<<endl;
+    cout<<"-o\t\t[output directory]"<<endl;
 	
 	cout<<"----------------------\n"<<endl;
 	cout<<"It is also possible to set the parameters writing flags and relative numbers in a file. To specify the file, use the option:"<<endl;

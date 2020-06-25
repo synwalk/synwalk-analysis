@@ -105,9 +105,9 @@ int irand(int n) {
 }
 
 
-void srand_file(void) {
+int srand_file(string out_dir) {
 
-	ifstream in("time_seed.dat");
+	ifstream in(out_dir + std::string("time_seed.dat"));
 	int seed;
 	
 	if (!in.is_open())
@@ -120,9 +120,9 @@ void srand_file(void) {
 	
 	
 	srand5(seed);
-	ofstream out("time_seed.dat");
+	ofstream out(out_dir + std::string("time_seed.dat"));
 	out<<seed+1<<endl;
-	
+	return seed;
 
 }
 
