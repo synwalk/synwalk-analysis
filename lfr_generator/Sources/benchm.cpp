@@ -1603,7 +1603,7 @@ int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, 
 		set<int>::iterator itb=E[u].begin();
 	
 		while (itb!=E[u].end())
-			out1<<u+1<<"\t"<<*(itb++)+1<<endl;
+			out1<<u<<"\t"<<*(itb++)<<endl;
 		
 		
 
@@ -1615,9 +1615,9 @@ int print_network(deque<set<int> > & E, const deque<deque<int> > & member_list, 
 
 	for (int i=0; i<member_list.size(); i++) {
 		
-		out2<<i+1<<"\t";
+		out2<<i<<"\t";
 		for (int j=0; j<member_list[i].size(); j++)
-			out2<<member_list[i][j]+1<<" ";
+			out2<<member_list[i][j]<<" ";
 		out2<<endl;
 	
 	}
@@ -1826,9 +1826,9 @@ int main(int argc, char * argv[]) {
 	else
         srand5(seed);
 
-	p.path_to_network_file = p.out_dir + std::string("network_") + std::to_string(seed) + std::string(".dat");
-    p.path_to_community_file = p.out_dir + std::string("community_") + std::to_string(seed) + std::string(".dat");
-    p.path_to_statistics_file = p.out_dir + std::string("statistics_") + std::to_string(seed) + std::string(".dat");
+	p.path_to_network_file = p.out_dir + std::string("graph_") + std::to_string(seed) + std::string(".txt");
+    p.path_to_community_file = p.out_dir + std::string("membership_") + std::to_string(seed) + std::string(".txt");
+    p.path_to_statistics_file = p.out_dir + std::string("statistics_") + std::to_string(seed) + std::string(".txt");
 
 	erase_file_if_exists(p.path_to_network_file);
     erase_file_if_exists(p.path_to_community_file);
