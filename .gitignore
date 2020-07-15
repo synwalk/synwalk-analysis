@@ -5,3 +5,5 @@
 /results
 /data
 /lfr_generator/benchmark
+/figures
+/notebooks/.ipynb_checkpoints/
