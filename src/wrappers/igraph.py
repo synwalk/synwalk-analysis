@@ -2,21 +2,24 @@ from clusim.clustering import Clustering
 from igraph import Graph
 
 
-def read_graph(filepath) -> Graph:
+def read_graph(filepath, format='edgelist') -> Graph:
     """Reads a graph from an edge list file and returns an igraph Graph object.
 
     Parameters
     ----------
     filepath : str
         Path to the edge list file.
+    format : str
+        Format of the input file, e.g. 'edgelist', 'pajek',...
 
     Returns
     ------
     Graph
         An igraph Graph object.
     """
-    graph = Graph.Read(filepath, format='edgelist')
+    graph = Graph.Read(filepath, format=format)
     graph.to_undirected()  # igraph returns a directed graph by default
+    graph.simplify(combine_edges='sum')
 
     # handle one-based vertex numbering: if edge list numbers vertices starting from 1,
     # the first vertex (vertex '0') will be an artifact
