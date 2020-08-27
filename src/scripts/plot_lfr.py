@@ -6,33 +6,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.lfr.benchmark_results import BenchmarkResults
+from src.utils.plotting import init_plot_style
 
 ResultInfo = namedtuple('ResultInfo', ['path', 'label', 'linestyle'])
 
 
-def init_plt():
-    """Initialize the plot style for pyplot.
-    """
-    plt.rcParams.update({'font.size': 30})
-    plt.rcParams.update({'text.usetex': True})
-    plt.rcParams.update({'font.family': 'sans-serif'})
-    plt.rcParams.update({'lines.linewidth': 2})
-    plt.rcParams.update({'lines.markersize': 8})
-    plt.rcParams.update({'lines.markeredgewidth': 2})
-    plt.rcParams.update({'axes.labelpad': 20})
-    # for font settings see https://stackoverflow.com/questions/2537868/sans-serif-math-with-latex-in-matplotlib
-    plt.rcParams['text.latex.preamble'] = [
-        r'\usepackage{amsmath,amssymb,amsfonts,amsthm}',
-        r'\usepackage{siunitx}',  # i need upright \micro symbols, but you need...
-        r'\sisetup{detect-all}',  # ...this to force siunitx to actually use your fonts
-        r'\usepackage{helvet}',  # set the normal font here
-        r'\usepackage{sansmath}',  # load up the sansmath so that math -> helvet
-        r'\sansmath'  # <- tricky! -- gotta actually tell tex to use!
-    ]
-
-
-def plot_ami_vs_mu(avg_degree, n, save_figure=True, plot_uncertainty=True, base_dir='../results/lfr/ami/',
-                   fig_dir='../figures/'):
+def plot_ami_vs_mu(avg_degree, n, save_figure=True, plot_uncertainty=True, plot_legend=True,
+                   base_dir='../results/lfr/ami/', fig_dir='../figures/'):
     """Plot LFR results as a function of the mixing parameter.
 
     Plot benchmark AMI results for a fixed average degree and network size as a function of the mixing parameter.
@@ -74,8 +54,9 @@ def plot_ami_vs_mu(avg_degree, n, save_figure=True, plot_uncertainty=True, base_
             plt.fill_between(xdata, upper, lower, alpha=0.25)
 
     plt.xlabel(r'Mixing parameter, $\mu$')
-    plt.ylabel(r'Adjusted Mutual Information, $\mathcal{I}^{adj}(\mathcal{Y}, \mathcal{Y}_{true})$')
-    plt.legend(loc=1)
+    plt.ylabel(r'AMI, $\mathcal{I}^{adj}(\mathcal{Y}, \mathcal{Y}_{true})$')
+    if plot_legend:
+        plt.legend(loc='best')
     plt.tight_layout()
 
     # save figure as .pdf
@@ -86,8 +67,8 @@ def plot_ami_vs_mu(avg_degree, n, save_figure=True, plot_uncertainty=True, base_
         plt.close()
 
 
-def plot_ami_vs_rho(avg_degree, mu, save_figure=True, plot_uncertainty=True, base_dir='../results/lfr/ami/',
-                    fig_dir='../figures/'):
+def plot_ami_vs_rho(avg_degree, mu, save_figure=True, plot_uncertainty=True, plot_legend=True,
+                    base_dir='../results/lfr/ami/', fig_dir='../figures/'):
     """Plot LFR results as a function of the network density.
 
     Plot benchmark AMI results for a fixed average degree and mixing parameter as a function of the network density.
@@ -128,12 +109,13 @@ def plot_ami_vs_rho(avg_degree, mu, save_figure=True, plot_uncertainty=True, bas
             lower = np.clip(ydata - results.get_score_std(), 0.0, 1.0)
             plt.fill_between(xdata, upper, lower, alpha=0.25)
 
-    plt.xlabel(r'Network density, $\rho_{\mid \bar{k} = %d}$' % avg_degree)
-    plt.ylabel(r'Adjusted Mutual Information, $\mathcal{I}^{adj}(\mathcal{Y}, \mathcal{Y}_{true})$')
-    plt.legend(loc=5)
+    plt.xlabel(r'Network density, $\rho$')
+    plt.ylabel(r'AMI, $\mathcal{I}^{adj}(\mathcal{Y}, \mathcal{Y}_{true})$')
     plt.xlim([0.0014, 0.4])
     plt.ylim([-0.05, 1.05])
     plt.semilogx()
+    if plot_legend:
+        plt.legend(loc=5)
     plt.tight_layout()
 
     # save figure as .pdf
@@ -144,7 +126,8 @@ def plot_ami_vs_rho(avg_degree, mu, save_figure=True, plot_uncertainty=True, bas
         plt.close()
 
 
-def plot_synwalk_error_vs_mu(avg_degree, n, save_figure=True, base_dir='../results/lfr/synwalk_error/',
+def plot_synwalk_error_vs_mu(avg_degree, n, save_figure=True, plot_legend=True,
+                             base_dir='../results/lfr/synwalk_error/',
                              fig_dir='../figures/'):
     """Plot the mismatch in Synwalk objective as a function of the mixing parameter.
 
@@ -191,7 +174,8 @@ def plot_synwalk_error_vs_mu(avg_degree, n, save_figure=True, base_dir='../resul
 
     plt.xlabel(r'Mixing parameter, $\mu$')
     plt.ylabel(r'Synwalk Deviation, $\frac{J(\mathcal{Y}) - J(\mathcal{Y}_{true})}{J(\mathcal{Y}_{true})}$')
-    plt.legend(lines, labels, loc=0)
+    if plot_legend:
+        plt.legend(lines, labels, loc=0)
     plt.tight_layout()
 
     # save figure as .pdf
@@ -226,8 +210,7 @@ def main(argv):
     if fig_dir[-1] != '/':
         fig_dir += '/'
 
-    # init plt parameters
-    init_plt()
+    init_plot_style()
 
     # plot ami vs mu
     avg_degrees = [15, 25, 50]  # average node degrees
