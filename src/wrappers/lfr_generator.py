@@ -37,12 +37,19 @@ class LFRGenerator:
             An argument string for the generator binary.
         """
 
-        # generic LFR parameters
+        # generic LFR parameters - set A
         max_community = int(0.2 * num_nodes)
         min_community = int(max_community * 0.25)
         max_degree = int(max_community * 0.95)
-        gamma = 2.0  # Power law exponent for the degree distribution
         beta = 1.0  # Power law exponent for the community size distribution
+        gamma = 2.0  # Power law exponent for the degree distribution
+
+        # generic LFR parameters - set B
+        # max_community = int(0.1 * num_nodes)
+        # min_community = 10
+        # max_degree = int(max_community * 0.95)
+        # beta = 1.0  # Power law exponent for the community size distribution
+        # gamma = 2.0  # Power law exponent for the degree distribution
 
         arg_str = f' -N {num_nodes} -mu {mixing_param} -k {avg_degree} -maxk {max_degree} -t1 {gamma} -t2 {beta} '
         arg_str += f'-minc {min_community} -maxc {max_community} '

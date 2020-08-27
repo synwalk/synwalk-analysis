@@ -144,6 +144,7 @@ def generate_benchmark_graphs(output_dir, num_graphs, graph_size, mixing_paramet
 
     # store random seeds
     with open(output_dir + 'seeds.txt', mode='w') as f:
-        f.write(f'# The benchmark graphs in this directory are generated '
-                f'with the following {num_graphs} random seeds:\n')
+        f.write(f'# The benchmark graphs in this directory are generated with the parameter string ' +
+                generator.get_param_string(graph_size, mixing_parameter, avg_degree) +
+                f' and with the following {num_graphs} random seeds:\n')
         f.write('\n'.join(map(str, seeds)))
