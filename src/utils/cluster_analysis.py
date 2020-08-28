@@ -1,6 +1,7 @@
+from collections import defaultdict
+
 import numpy as np
 from clusim.clustering import Clustering
-
 from igraph import Graph
 
 
@@ -116,3 +117,30 @@ def get_misclassfied_nodes(clu_true: Clustering, clu_pred: Clustering):
     misclassified.difference_update(correctly_classified)
 
     return correctly_classified, misclassified
+
+
+def matched_memberships(clu_true: Clustering, clu_pred: Clustering):
+    """Returns a matched membership list for a predicted clustering.
+
+    Returns the membership list for a predicted clustering when matched to a ground truth clustering. Clusters without
+    a matching ground truth cluster are aggregated into a single "residual" cluster.
+
+    Parameters
+    ----------
+    clu_true : Clustering
+        The ground truth clustering.
+    clu_pred : Clustering
+        The predicted clustering.
+
+    Returns
+    ------
+    list
+        The matched membership list with a residual cluster.
+    """
+    residual_nodes_cluster = max(clu_true.clusters) + 1
+    mapping = match_clusters(clu_true, clu_pred)  # mapping from true to predicted clusters
+    inv_mapping = defaultdict(lambda: residual_nodes_cluster)
+    inv_mapping.update({v: k for k, v in mapping.items()})  # mapping from predicted to true clusters
+
+    modified_membership_list = [inv_mapping[cpred] for cpred in clu_pred.to_membership_list()]
+    return residual_nodes_cluster, modified_membership_list
