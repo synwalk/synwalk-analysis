@@ -16,9 +16,7 @@ class Infomap:
     """
 
     def __init__(self, workspace_path='../workspace/', infomap_path='../infomap/Infomap'):
-        """Read infomap/synwalk results from .tree file and return a clusim clustering.
-
-            Parameters
+        """ Parameters
             ----------
             workspace_path : str
                 Path to a temporary workspace directory. Directory is created if does not exist.
