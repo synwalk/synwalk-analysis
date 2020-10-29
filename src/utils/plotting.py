@@ -23,7 +23,7 @@ class CustomSciFormatter(ScalarFormatter):
     def __init__(self, fmt='%.2f'):
         super(CustomSciFormatter, self).__init__()
         self.fmt = fmt
-        self.set_powerlimits((-1, 3))
+        self.set_powerlimits((-2, 3))
 
     def _set_format(self):
         self.format = self.fmt
@@ -58,7 +58,7 @@ def init_plot_style():
 
 
 def plot_histogram(ax: plt.Subplot, data: List, labels: List, n_bins=20, normalization='pmf', log_scale=False,
-                   bin_edges=None, tick_fmt='%.2f'):
+                   bin_edges=None, tick_fmt='%.2f', xmin=None, xmax=None):
     """Plot a histogram.
 
     Plot a histogram with selectable normalization, scale and bin edges, etc. All data vectors share the same bin
@@ -82,12 +82,20 @@ def plot_histogram(ax: plt.Subplot, data: List, labels: List, n_bins=20, normali
         Optional custom bin edges. If given, `n_bins` is ignored.
     tick_fmt : str
         Format string for the data tick labels (x-axis).
+    xmin : float
+        Leftmost bin edge. If none the minimum entry in all data is taken instead.
+    xmax : float
+        Rightmost bin edge. If none the maximum entry in all data is taken instead.
     """
-    xmax = -np.infty
-    xmin = np.infty
-    for d in data:
-        xmin = min(xmin, np.min(d))
-        xmax = max(xmax, np.max(d))
+    if xmin is None:
+        xmin = np.infty
+        for d in data:
+            xmin = min(xmin, np.min(d))
+
+    if xmax is None:
+        xmax = -np.infty
+        for d in data:
+            xmax = max(xmax, np.max(d))
 
     if bin_edges is None:
         if log_scale:
