@@ -81,6 +81,9 @@ def normalized_local_degrees(graph: Graph, clu: Clustering):
     for i, cluster_list in enumerate(clu.to_cluster_list()):
         cluster = graph.subgraph(cluster_list)
         max_cluster_edges = (len(cluster.vs) * (len(cluster.vs) - 1)) / 2.0
+        # avoid devide by zero
+        if max_cluster_edges == 0:
+            continue
         nlds[cluster.vs['node_id']] = [node_degrees[i] / max_cluster_edges for i in cluster.vs['node_id']]
 
     return nlds
@@ -144,3 +147,128 @@ def matched_memberships(clu_true: Clustering, clu_pred: Clustering):
 
     modified_membership_list = [inv_mapping[cpred] for cpred in clu_pred.to_membership_list()]
     return residual_nodes_cluster, modified_membership_list
+
+
+def conductance(subgraph: Graph):
+    """Computes the conductance for a given cluster/subgraph.
+
+    Parameters
+    ----------
+    subgraph : Graph
+        The subgraph.
+
+    Returns
+    ------
+    float
+        The conductance.
+    """
+    node_degrees = subgraph.vs['degree']
+    int_degrees = np.array(subgraph.degree())
+    ext_degrees = node_degrees - int_degrees
+    return np.sum(ext_degrees) / (2.0 * np.sum(int_degrees) + np.sum(ext_degrees)) if np.sum(ext_degrees) > 0 else 0.0
+
+
+def cut_ratio(graph: Graph, subgraph: Graph):
+    """Computes the cut ratio for a given cluster/subgraph.
+
+    Parameters
+    ----------
+    subgraph : Graph
+        The subgraph.
+
+    Returns
+    ------
+    float
+        The cut ratio.
+    """
+    node_degrees = subgraph.vs['degree']
+    int_degrees = np.array(subgraph.degree())
+    ext_degrees = node_degrees - int_degrees
+    return np.sum(ext_degrees) / (len(subgraph.vs) * (len(graph.vs) - len(subgraph.vs)))
+
+
+def get_cluster_properties(graph: Graph, clu: Clustering, feature='size', ignore_smaller_than=3):
+    """Computes cluster properties for a given graph and clustering.
+
+    Parameters
+    ----------
+    graph : Graph
+        The graph.
+    clu : Clustering
+        The clustering.
+    feature : str
+        Cluster property to be analyzed.
+    ignore_smaller_than : int
+        Minimum cluster size for clusters to be considered in the analysis.
+
+    Returns
+    ------
+    list
+        List of computed cluster properties.
+    """
+    # annotate nodes with their degree as this is needed for computing the conductance and cut ratio
+    graph.vs['degree'] = graph.degree()
+
+    statistics = []
+    for nodes in clu.to_cluster_list():
+        if len(nodes) < ignore_smaller_than:
+            continue
+
+        cluster = graph.subgraph(nodes)
+        if feature == 'size':
+            statistics.append(len(nodes))
+        elif feature == 'density':
+            statistics.append(cluster.density())
+        elif feature == 'clustering_coefficient':
+            statistics.append(cluster.transitivity_undirected(mode='zero'))
+        elif feature == 'conductance':
+            statistics.append(conductance(cluster))
+        elif feature == 'cut_ratio':
+            statistics.append(cut_ratio(graph, cluster))
+        else:
+            print('Invalid feature!')
+            return []
+
+    return statistics
+
+
+def get_node_properties(graph: Graph, clu: Clustering, feature='mixing_parameter', ignore_smaller_than=3):
+    """Computes node properties for a given graph and clustering.
+
+    Parameters
+    ----------
+    graph : Graph
+        The graph.
+    clu : Clustering
+        The clustering.
+    feature : str
+        Node property to be analyzed.
+    ignore_smaller_than : int
+        Minimum cluster size for member nodes to be considered in the analysis.
+
+    Returns
+    ------
+    list
+        List of computed node properties.
+    """
+    # annotate nodes with their degree
+    graph.vs['degree'] = graph.degree()
+
+    statistics = []
+    for nodes in clu.to_cluster_list():
+        if len(nodes) < ignore_smaller_than:
+            continue
+
+        cluster = graph.subgraph(nodes)
+        if feature == 'mixing_parameter':
+            int_degrees = np.array(cluster.degree())
+            statistics.extend([1.0 - kint / k for kint, k in zip(int_degrees, cluster.vs['degree']) if k > 2])
+            pass
+        elif feature == 'nld':
+            max_cluster_edges = (len(cluster.vs) * (len(cluster.vs) - 1)) / 2.0
+            statistics.extend(np.array(cluster.vs['degree']) / max_cluster_edges)
+        else:
+            print('Invalid feature!')
+            return []
+
+    return statistics
