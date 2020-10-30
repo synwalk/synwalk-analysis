@@ -165,7 +165,7 @@ def conductance(subgraph: Graph):
     node_degrees = subgraph.vs['degree']
     int_degrees = np.array(subgraph.degree())
     ext_degrees = node_degrees - int_degrees
-    return np.sum(ext_degrees) / (2.0 * np.sum(int_degrees) + np.sum(ext_degrees)) if np.sum(ext_degrees) > 0 else 0.0
+    return np.sum(ext_degrees) / (0.5 * np.sum(int_degrees) + np.sum(ext_degrees)) if np.sum(ext_degrees) > 0 else 0.0
 
 
 def cut_ratio(graph: Graph, subgraph: Graph):
