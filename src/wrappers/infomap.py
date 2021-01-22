@@ -15,7 +15,7 @@ class Infomap:
         Path to the Infomap binary (should include synwalk extension).
     """
 
-    def __init__(self, workspace_path='../workspace/', infomap_path='../infomap/Infomap'):
+    def __init__(self, workspace_path='../workspace/', infomap_path='../Infomap'):
         """ Parameters
             ----------
             workspace_path : str
@@ -44,15 +44,17 @@ class Infomap:
         os.makedirs(self.workspace_path, exist_ok=True)
 
         # construct argument string
+        out_file = 'infomap_out_' + str(os.getpid())
         args = ' --two-level --undirected --zero-based-numbering' \
-               ' --input-format link-list --out-name infomap_out'
+               ' --input-format link-list --out-name ' + out_file
         args += additional_args
 
         # run infomap
         os.system(self.infomap_path + ' ' + input_file + ' ' + self.workspace_path + ' ' + args)
 
         # read clustering from output file
-        clu = Infomap.read_communities_from_tree_file(self.workspace_path + 'infomap_out.tree')
+        clu = Infomap.read_communities_from_tree_file(self.workspace_path + out_file + '.tree')
+        os.remove(self.workspace_path + out_file + '.tree')
         return clu
 
     def synwalk(self, input_file, additional_args=''):
@@ -73,15 +75,17 @@ class Infomap:
         os.makedirs(self.workspace_path, exist_ok=True)
 
         # construct argument string
-        args = ' --two-level --undirected --zero-based-numbering --altmap' \
-               ' --input-format link-list --out-name synwalk_out'
+        out_file = 'synwalk_out_' + str(os.getpid())
+        args = ' --two-level --undirected --zero-based-numbering --synwalk' \
+               ' --input-format link-list --out-name ' + out_file
         args += additional_args
 
         # run synwalk
         os.system(self.infomap_path + ' ' + input_file + ' ' + self.workspace_path + ' ' + args)
 
         # read clustering from output file
-        clu = Infomap.read_communities_from_tree_file(self.workspace_path + 'synwalk_out.tree')
+        clu = Infomap.read_communities_from_tree_file(self.workspace_path + out_file + '.tree')
+        os.remove(self.workspace_path + out_file + '.tree')
         return clu
 
     @classmethod
