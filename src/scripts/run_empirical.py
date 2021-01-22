@@ -16,7 +16,7 @@ def detect_communities(network: str, base_path='./'):
         Path to the project root.
     """
     # check if network file exists
-    graph_file = base_path + 'data/empirical/' + network + '.txt'
+    graph_file = base_path + 'data/empirical/clean/' + network + '.txt'
     if not os.path.exists(graph_file):
         print('Graph file for network ' + network + ' does not exist at ' + graph_file + '. Abort detection.')
         return
@@ -27,7 +27,7 @@ def detect_communities(network: str, base_path='./'):
     os.makedirs(results_dir, exist_ok=True)
 
     print('Detecting communities on ' + network + ' with Infomap...', flush=True)
-    infomap_path = base_path + 'infomap/Infomap'
+    infomap_path = base_path + 'Infomap'
     clu = Infomap(workspace, infomap_path).infomap(graph_file)
     clu.save(results_dir + 'clustering_infomap.json')
 
