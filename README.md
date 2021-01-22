@@ -54,35 +54,34 @@ In case you want to generate LFR benchmark networks yourself, you need to compil
 
 The following gives you a brief overview on the organization and contents of this project. Note: in general it should be clear where to change the default paths in the scripts and notebooks, but if you don't want to waste any time just use the default project structure.
 ```
-	├── LICENSE				<- Contains the project's license.
+    ├── LICENSE             <- Contains the project's license.
     │
-    ├── README.md			<- This readme file.
+    ├── README.md           <- This readme file.
     │
-    ├── environment.yml		<- The file for reproducing the Python environment necessary for
-    │  	  	  	 		   	   running the code in this project. Generated with `conda <env> export > environment.yml`
+    ├── environment.yml     <- The file for reproducing the Python environment necessary for running the code in this project.
     │
     ├── data
-    │   ├── clean			<- Cleaned data sets, e.g. remove invalid/missing data,...
-    │   ├── processed		<- The final, canonical data sets for modeling after any preprocessing steps.
-    │   └── raw				<- The original, immutable data dump.
+    │   ├── clean           <- Cleaned data sets, e.g. remove invalid/missing data,...
+    │   ├── processed       <- The final, canonical data sets for modeling after any preprocessing steps.
+    │   └── raw             <- The original, immutable data dump.
     │
-    ├── figures				<- Output directory for generated figures.
+    ├── figures             <- Output directory for generated figures.
     |
-    ├── lfr_generator		<- Contains the C++ code for generating the LFR benchmark networks.
+    ├── lfr_generator       <- Contains the C++ code for generating the LFR benchmark networks.
     │
-    ├── notebooks			<- Jupyter notebooks for running experiments and analysis.
+    ├── notebooks           <- Jupyter notebooks for running experiments and analysis.
     │
-    ├── results				<- Clustering and metric results get stored here.
+    ├── results             <- Clustering and metric results get stored here.
     |
-    ├── src					<- Python source code of the analysis framework.
-    │   ├── __init__.py		<- Makes src a Python module
-    │   ├── data			<- Cleaning empirical networks, generating and loading LFR networks.
-    │   ├── lfr				<- Code for generating and storing LFR benchmark results.
-    │   ├── scripts			<- Scripts for running experiments.
-    │   ├── utils			<- Utils for plotting and cluster analysis.
-    │   └── wrappers		<- Wrappers for igraph, infomap/synwalk, the LFR generator and some metrics.
+    ├── src                 <- Python source code of the analysis framework.
+    │   ├── __init__.py     <- Makes src a Python module
+    │   ├── data            <- Cleaning empirical networks, generating and loading LFR networks.
+    │   ├── lfr             <- Code for generating and storing LFR benchmark results.
+    │   ├── scripts         <- Scripts for running experiments.
+    │   ├── utils           <- Utils for plotting and cluster analysis.
+    │   └── wrappers        <- Wrappers for igraph, infomap/synwalk, the LFR generator and some metrics.
     │
-    ├── workspace			<- Workspace for temporary files created by Infomap and Synwalk.
+    ├── workspace           <- Workspace for temporary files created by Infomap and Synwalk.
 ```
 
 
