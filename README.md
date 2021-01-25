@@ -61,9 +61,8 @@ The following gives you a brief overview on the organization and contents of thi
     ├── environment.yml     <- The file for reproducing the Python environment necessary for running the code in this project.
     │
     ├── data
-    │   ├── clean           <- Cleaned data sets, e.g. remove invalid/missing data,...
-    │   ├── processed       <- The final, canonical data sets for modeling after any preprocessing steps.
-    │   └── raw             <- The original, immutable data dump.
+    │   ├── empirical       <- Empirical networks.
+    │   └── lfr_benchmark   <- LFR benchmark networks.
     │
     ├── figures             <- Output directory for generated figures.
     |
