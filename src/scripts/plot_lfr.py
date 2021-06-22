@@ -37,7 +37,9 @@ def plot_ami_vs_mu(avg_degree, n, save_figure=True, plot_uncertainty=True, plot_
     path_suffix = f'/{avg_degree}deg/{n}n.pkl'
     info = [ResultInfo(base_dir + 'infomap' + path_suffix, 'Infomap', 'x:'),
             ResultInfo(base_dir + 'synwalk' + path_suffix, 'SynWalk', '^:'),
-            ResultInfo(base_dir + 'walktrap' + path_suffix, 'Walktrap', 's:')]
+            ResultInfo(base_dir + 'walktrap' + path_suffix, 'Walktrap', 's:'),
+            ResultInfo(base_dir + 'louvain' + path_suffix, 'Louvain', 'o:'),
+            ResultInfo(base_dir + 'graphtool' + path_suffix, 'GraphTool', 'd:')]
 
     # plot the results
     plt.figure(figsize=(12, 9))
@@ -92,7 +94,9 @@ def plot_ami_vs_rho(avg_degree, mu, save_figure=True, plot_uncertainty=True, plo
     path_suffix = f'/{avg_degree}deg/{int(100 * mu)}mu.pkl'
     info = [ResultInfo(base_dir + 'infomap' + path_suffix, 'Infomap', 'x:'),
             ResultInfo(base_dir + 'synwalk' + path_suffix, 'SynWalk', '^:'),
-            ResultInfo(base_dir + 'walktrap' + path_suffix, 'Walktrap', 's:')]
+            ResultInfo(base_dir + 'walktrap' + path_suffix, 'Walktrap', 's:'),
+            ResultInfo(base_dir + 'louvain' + path_suffix, 'Louvain', 'o:'),
+            ResultInfo(base_dir + 'graphtool' + path_suffix, 'GraphTool', 'd:')]
 
     # plot the results
     plt.figure(figsize=(12, 9))
