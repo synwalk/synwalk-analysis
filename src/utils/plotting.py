@@ -58,7 +58,7 @@ def init_plot_style():
 
 
 def plot_histogram(ax: plt.Subplot, data: List, labels: List, n_bins=20, normalization='pmf', log_scale=False,
-                   bin_edges=None, tick_fmt='%.2f', xmin=None, xmax=None):
+                   bin_edges=None, tick_fmt='%.2f', xmin=None, xmax=None, colors=None):
     """Plot a histogram.
 
     Plot a histogram with selectable normalization, scale and bin edges, etc. All data vectors share the same bin
@@ -86,6 +86,8 @@ def plot_histogram(ax: plt.Subplot, data: List, labels: List, n_bins=20, normali
         Leftmost bin edge. If none the minimum entry in all data is taken instead.
     xmax : float
         Rightmost bin edge. If none the maximum entry in all data is taken instead.
+    colors : List
+        List of colors for the data vectors.
     """
     if xmin is None:
         xmin = np.infty
@@ -105,6 +107,9 @@ def plot_histogram(ax: plt.Subplot, data: List, labels: List, n_bins=20, normali
     else:
         n_bins = len(bin_edges) - 1
 
+    if colors is None:
+        colors = [None] * len(labels)
+
     bin_sizes = bin_edges[1:] - bin_edges[:-1]
     bin_centers = bin_edges[:-1] + bin_sizes * 0.5
 
@@ -112,14 +117,14 @@ def plot_histogram(ax: plt.Subplot, data: List, labels: List, n_bins=20, normali
     col_widths = plt_bin_widths / len(data)
     plt_bin_centers = bin_centers - 0.5 * plt_bin_widths + col_widths * 0.5
 
-    for i, (d, l) in enumerate(zip(data, labels)):
+    for i, (d, l, c) in enumerate(zip(data, labels, colors)):
         counts, _ = np.histogram(d, bins=bin_edges)
         if normalization == 'pmf' or normalization == 'pdf':
             counts = counts / np.sum(counts)  # normalize to get pmf for bins
         if normalization == 'pdf':
             counts /= bin_sizes  # normalize to get pdf
 
-        ax.bar(plt_bin_centers + i * col_widths, counts, width=col_widths, label=l)
+        ax.bar(plt_bin_centers + i * col_widths, counts, width=col_widths, label=l, color=c)
 
     if log_scale:
         ax.set_xscale('log')

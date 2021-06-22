@@ -1,12 +1,13 @@
 import os
 import sys
 
-from src.wrappers.igraph import walktrap
+from src.wrappers.graph_tool import sbm_inference
+from src.wrappers.igraph import walktrap, louvain
 from src.wrappers.infomap import Infomap
 
 
 def detect_communities(network: str, base_path='./'):
-    """ Run community detection (Walktrap, Infomap, Synwalk) on a given network.
+    """ Run community detection (Walktrap, Infomap, Synwalk, Louvain, GraphTool) on a given network.
 
     Parameters
     ----------
@@ -39,9 +40,17 @@ def detect_communities(network: str, base_path='./'):
     clu = walktrap(graph_file)
     clu.save(results_dir + 'clustering_walktrap.json')
 
+    print('Detecting communities on ' + network + ' with Louvain...', flush=True)
+    clu = louvain(graph_file)
+    clu.save(results_dir + 'clustering_louvain.json')
+
+    print('Detecting communities on ' + network + ' with GraphTool (SBM Inference)...', flush=True)
+    clu = sbm_inference(graph_file)
+    clu.save(results_dir + 'clustering_graphtool.json')
+
 
 def main(argv):
-    """ Run community detection (Walktrap, Infomap, Synwalk) on a given set of networks.
+    """ Run community detection (Walktrap, Infomap, Synwalk, Louvain, GraphTool) on a given set of networks.
 
     Parameters
     ----------

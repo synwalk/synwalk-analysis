@@ -4,12 +4,15 @@ from src.data.lfr_io import get_benchmark_files
 from src.lfr.benchmark_results import *
 from src.wrappers.igraph import *
 from src.wrappers.infomap import Infomap
+from src.wrappers.graph_tool import sbm_inference
 from src.wrappers.metrics import ami_score, synwalk_error
 
 # method dict
 methods = {'infomap': Infomap().infomap,
            'synwalk': Infomap().synwalk,
            'walktrap': walktrap,
+           'louvain': louvain,
+           'graphtool': sbm_inference,
            'label_propagation': label_propagation}
 
 # metrics dict
@@ -34,7 +37,7 @@ def run_benchmark(benchmark_dir, results_dir, clustering_method, max_samples=100
         E.g. ´results_dir = ../results/lfr_benchmark/clustering/infomap/15deg/300n/´.
     clustering_method : str
         String identifier for a clustering method that should be applied to the benchmark graphs. Available clustering
-        methods are 'infomap', 'synwalk', 'walktrap' and 'label_propagation'.
+        methods are 'infomap', 'synwalk', 'walktrap', 'louvain', 'graphtool' and 'label_propagation'.
     max_samples : int
         Maximum number of benchmark graphs processed from each subdirectory in ´benchmark_dir´.
     overwrite_results : bool

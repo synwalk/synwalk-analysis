@@ -86,7 +86,7 @@ def label_propagation(filepath):
     return clu.relabel_clusters_by_size()
 
 
-def multilevel(filepath):
+def louvain(filepath):
     """Wrapper around igraph's multilevel implementation.
 
     Parameters
